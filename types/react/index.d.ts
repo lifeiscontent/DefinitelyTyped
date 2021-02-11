@@ -82,7 +82,7 @@ declare namespace React {
     type ComponentType<P = {}> = ComponentClass<P> | FunctionComponent<P>;
 
     type JSXElementConstructor<P> =
-        | ((props: P) => ReactElement<any, any> | null)
+        | ((props: P) => ReactElement<P, any> | null)
         | (new (props: P) => Component<P, any>);
 
     interface RefObject<T> {
@@ -143,7 +143,7 @@ declare namespace React {
         ref?: LegacyRef<T>;
     }
 
-    interface ReactElement<P = any, T extends string | JSXElementConstructor<any> = string | JSXElementConstructor<any>> {
+    interface ReactElement<P = any, T extends string | JSXElementConstructor<P>> {
         type: T;
         props: P;
         key: Key | null;
@@ -2878,12 +2878,11 @@ declare namespace React {
     // ----------------------------------------------------------------------
 
     interface ReactChildren {
-        map<T, C>(children: C | C[], fn: (child: C, index: number) => T):
-            C extends null | undefined ? C : Array<Exclude<T, boolean | null | undefined>>;
+        map<T, C>(children: C | C[], fn: (child: C, index: number) => T): T[];
         forEach<C>(children: C | C[], fn: (child: C, index: number) => void): void;
-        count(children: any): number;
-        only<C>(children: C): C extends any[] ? never : C;
-        toArray(children: ReactNode | ReactNode[]): Array<Exclude<ReactNode, boolean | null | undefined>>;
+        count<C>(children: C | C[]): number;
+        only<C>(children: C): C extends unknown[] ? never : C;
+        toArray<C>(children: C | C[]): C[];
     }
 
     //
